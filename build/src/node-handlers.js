@@ -1,11 +1,17 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var ErrorHanding = require("./error-handling");
-var ConfigHandler = require('./config-handler');
+var ConfigHandler = require("./config-handler");
 var RED;
 function setRED(globalRED) {
     RED = globalRED;
@@ -34,6 +40,7 @@ var NodeBaseImpl = (function () {
         }
     }
     NodeBaseImpl.prototype.addMsg = function (msg) {
+        var _this = this;
         if (!this.apiLib || !this.msgQueue) {
             this.node.status({ fill: "red", shape: "dot", text: 'missing Groov configuration' });
             return;
@@ -42,16 +49,18 @@ var NodeBaseImpl = (function () {
             this.node.status({ fill: "red", shape: "dot", text: 'Configuration error' });
             return;
         }
-        var queueLength = this.msgQueue.add(msg, this.node, this, this.onInput);
-        if (queueLength < 0) {
-            this.node.warn('Message rejected. Queue is full for Groov.');
-        }
-        var currentMsgBeingProcessed = this.msgQueue.getCurrentMessage();
-        if (currentMsgBeingProcessed.inputEventObject !== this) {
-            if (queueLength !== 0) {
-                this.updateQueuedStatus(queueLength);
+        this.apiLib.getServerType(function () {
+            var queueLength = _this.msgQueue.add(msg, _this.node, _this, _this.onInput);
+            if (queueLength < 0) {
+                _this.node.warn('Message rejected. Queue is full for Groov.');
             }
-        }
+            var currentMsgBeingProcessed = _this.msgQueue.getCurrentMessage();
+            if (currentMsgBeingProcessed.inputEventObject !== _this) {
+                if (queueLength !== 0) {
+                    _this.updateQueuedStatus(queueLength);
+                }
+            }
+        });
     };
     NodeBaseImpl.prototype.updateQueuedStatus = function (queueLength) {
         if (queueLength >= 1) {
@@ -82,15 +91,15 @@ exports.NodeBaseImpl = NodeBaseImpl;
 var ReadNodeImpl = (function (_super) {
     __extends(ReadNodeImpl, _super);
     function ReadNodeImpl(node, nodeConfig) {
-        var _this = this;
-        _super.call(this, nodeConfig, node);
-        this.nodeReadConfig = nodeConfig;
-        this.node.on('close', function () {
+        var _this = _super.call(this, nodeConfig, node) || this;
+        _this.nodeReadConfig = nodeConfig;
+        _this.node.on('close', function () {
             _this.onClose();
         });
-        this.node.on('input', function (msg) {
+        _this.node.on('input', function (msg) {
             _this.addMsg(msg);
         });
+        return _this;
     }
     ReadNodeImpl.getNodeType = function () {
         return 'groov-read-ds';
@@ -187,15 +196,15 @@ exports.ReadNodeImpl = ReadNodeImpl;
 var WriteNodeImpl = (function (_super) {
     __extends(WriteNodeImpl, _super);
     function WriteNodeImpl(node, nodeConfig) {
-        var _this = this;
-        _super.call(this, nodeConfig, node);
-        this.nodeWriteConfig = nodeConfig;
+        var _this = _super.call(this, nodeConfig, node) || this;
+        _this.nodeWriteConfig = nodeConfig;
         node.on('close', function () {
             _this.onClose();
         });
         node.on('input', function (msg) {
             _this.addMsg(msg);
         });
+        return _this;
     }
     WriteNodeImpl.getNodeType = function () {
         return 'groov-write-ds';

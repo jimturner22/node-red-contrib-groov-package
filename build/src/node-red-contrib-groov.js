@@ -1,7 +1,8 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var NodeHandlers = require("./node-handlers");
 var ConfigHandler = require("./config-handler");
-var semver = require('semver');
+var semver = require("semver");
 var module;
 function checkVersion(RED) {
     var minNodeJsRequired = 'v4.4.5';

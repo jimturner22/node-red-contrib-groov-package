@@ -1,12 +1,18 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var ApiLib = require("./api");
-var https = require('https');
-var fs = require('fs');
+var https = require("https");
+var fs = require("fs");
 var DatastoreApi = ApiLib.DatastoreApi;
 var RequestOptionsModifier = (function () {
     function RequestOptionsModifier(originalAddress, port, isLocalhost, publicCertFile, caCertFile, agent) {
@@ -35,30 +41,35 @@ var RequestOptionsModifier = (function () {
 var DatastoreApiEx = (function (_super) {
     __extends(DatastoreApiEx, _super);
     function DatastoreApiEx(apiKey, address, publicCertFile, caCertFile) {
-        var path = DatastoreApiEx.isEpicBox() ? '/view/api/' : '/api';
-        _super.call(this, address + path);
-        this.tagMap = null;
-        this.originalAddress = address;
-        this.port = 443;
-        this.apiKey = apiKey;
-        this.publicCertFile = publicCertFile;
-        this.caCertFile = caCertFile;
-        if (this.originalAddress.trim().toLowerCase() === 'https://localhost') {
-            this.isLocalHost = true;
-            if (this.isGroovBox()) {
-                this.port = 8443;
+        var _this = this;
+        var path = '/api/';
+        _this = _super.call(this, address + path) || this;
+        _this.hasDeterminedSystemType = false;
+        _this.isGroovBox = false;
+        _this.isGroovEPIC = false;
+        _this.tagMap = null;
+        _this.originalAddress = address;
+        _this.port = 443;
+        _this.apiKey = apiKey;
+        _this.publicCertFile = publicCertFile;
+        _this.caCertFile = caCertFile;
+        if (_this.originalAddress.trim().toLowerCase() === 'https://localhost') {
+            _this.isLocalHost = true;
+            if (_this.isHostGroovBox()) {
+                _this.port = 8443;
             }
         }
-        this.replaceDefaultAuthWithCustomRequestOptions();
-        this.setApiKey(ApiLib.DatastoreApiApiKeys.api_key, apiKey);
+        _this.replaceDefaultAuthWithCustomRequestOptions();
+        _this.setApiKey(ApiLib.DatastoreApiApiKeys.api_key, apiKey);
+        return _this;
     }
-    DatastoreApiEx.prototype.isGroovBox = function () {
+    DatastoreApiEx.prototype.isHostGroovBox = function () {
         var hasMmpServer = fs.existsSync("/etc/init.d/mmpserver");
         var hasSupervisor = fs.existsSync("/usr/sbin/supervisor-get-serial-number");
         var hasOptoapps = fs.existsSync("/var/lib/jetty/optoapps");
         return hasMmpServer && hasSupervisor && hasOptoapps;
     };
-    DatastoreApiEx.isEpicBox = function () {
+    DatastoreApiEx.isHostEpic = function () {
         var hasOptoApps = fs.existsSync("/usr/share/nxtio/");
         return hasOptoApps;
     };
@@ -81,6 +92,52 @@ var DatastoreApiEx = (function (_super) {
             }
         }
         return this.configError;
+    };
+    DatastoreApiEx.prototype.getServerType = function (callback) {
+        var _this = this;
+        if (this.hasDeterminedSystemType) {
+            process.nextTick(callback);
+        }
+        else {
+            _super.prototype.dataStoreListDevices.call(this).then(function (fullfilledResponse) {
+                if (fullfilledResponse.body && Array.isArray(fullfilledResponse.body)) {
+                    _this.isGroovBox = true;
+                    _this.hasDeterminedSystemType = true;
+                    callback();
+                }
+                else {
+                    _this.basePath = '/view/api/';
+                    _super.prototype.dataStoreListDevices.call(_this).then(function (fullfilledResponse) {
+                        if (fullfilledResponse.body && Array.isArray(fullfilledResponse.body)) {
+                            _this.isGroovEPIC = true;
+                            _this.hasDeterminedSystemType = true;
+                            callback();
+                        }
+                        else {
+                            _this.basePath = _this.originalAddress + '/api/';
+                            callback();
+                        }
+                    }).catch(function (error) {
+                        callback(error);
+                    });
+                }
+            }).catch(function (error) {
+                _this.basePath = _this.originalAddress + '/view/api/';
+                _super.prototype.dataStoreListDevices.call(_this).then(function (fullfilledResponse) {
+                    if (fullfilledResponse.body && Array.isArray(fullfilledResponse.body)) {
+                        _this.isGroovEPIC = true;
+                        _this.hasDeterminedSystemType = true;
+                        callback();
+                    }
+                    else {
+                        _this.basePath = _this.originalAddress + '/api/';
+                        callback();
+                    }
+                }).catch(function (error) {
+                    callback(error);
+                });
+            });
+        }
     };
     DatastoreApiEx.prototype.hasTagMap = function () {
         return this.tagMap ? true : false;

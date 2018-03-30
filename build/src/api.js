@@ -1,11 +1,17 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var request = require('request');
-var Promise = require('bluebird');
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var request = require("request");
+var Promise = require("bluebird");
 var defaultBasePath = 'https://localhost/api';
 var TagValue = (function () {
     function TagValue() {
@@ -13,8 +19,8 @@ var TagValue = (function () {
     return TagValue;
 }());
 exports.TagValue = TagValue;
-var TagValue;
 (function (TagValue) {
+    var ValueTypeEnum;
     (function (ValueTypeEnum) {
         ValueTypeEnum[ValueTypeEnum["TagValueBoolean"] = 'tagValueBoolean'] = "TagValueBoolean";
         ValueTypeEnum[ValueTypeEnum["IntegerValue"] = 'integerValue'] = "IntegerValue";
@@ -25,13 +31,13 @@ var TagValue;
         ValueTypeEnum[ValueTypeEnum["FloatArrayValue"] = 'floatArrayValue'] = "FloatArrayValue";
         ValueTypeEnum[ValueTypeEnum["StringArrayValue"] = 'stringArrayValue'] = "StringArrayValue";
         ValueTypeEnum[ValueTypeEnum["ErrorValue"] = 'errorValue'] = "ErrorValue";
-    })(TagValue.ValueTypeEnum || (TagValue.ValueTypeEnum = {}));
-    var ValueTypeEnum = TagValue.ValueTypeEnum;
+    })(ValueTypeEnum = TagValue.ValueTypeEnum || (TagValue.ValueTypeEnum = {}));
 })(TagValue = exports.TagValue || (exports.TagValue = {}));
+exports.TagValue = TagValue;
 var BooleanValue = (function (_super) {
     __extends(BooleanValue, _super);
     function BooleanValue() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     return BooleanValue;
 }(TagValue));
@@ -39,7 +45,7 @@ exports.BooleanValue = BooleanValue;
 var BooleanValueArray = (function (_super) {
     __extends(BooleanValueArray, _super);
     function BooleanValueArray() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     return BooleanValueArray;
 }(TagValue));
@@ -53,7 +59,7 @@ exports.Device = Device;
 var DataStoreDevice = (function (_super) {
     __extends(DataStoreDevice, _super);
     function DataStoreDevice() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     return DataStoreDevice;
 }(Device));
@@ -61,7 +67,7 @@ exports.DataStoreDevice = DataStoreDevice;
 var ErrorValue = (function (_super) {
     __extends(ErrorValue, _super);
     function ErrorValue() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     return ErrorValue;
 }(TagValue));
@@ -69,7 +75,7 @@ exports.ErrorValue = ErrorValue;
 var FloatArrayValue = (function (_super) {
     __extends(FloatArrayValue, _super);
     function FloatArrayValue() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     return FloatArrayValue;
 }(TagValue));
@@ -77,7 +83,7 @@ exports.FloatArrayValue = FloatArrayValue;
 var FloatValue = (function (_super) {
     __extends(FloatValue, _super);
     function FloatValue() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     return FloatValue;
 }(TagValue));
@@ -85,7 +91,7 @@ exports.FloatValue = FloatValue;
 var IntegerArrayValue = (function (_super) {
     __extends(IntegerArrayValue, _super);
     function IntegerArrayValue() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     return IntegerArrayValue;
 }(TagValue));
@@ -93,7 +99,7 @@ exports.IntegerArrayValue = IntegerArrayValue;
 var IntegerValue = (function (_super) {
     __extends(IntegerValue, _super);
     function IntegerValue() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     return IntegerValue;
 }(TagValue));
@@ -101,7 +107,7 @@ exports.IntegerValue = IntegerValue;
 var StringArrayValue = (function (_super) {
     __extends(StringArrayValue, _super);
     function StringArrayValue() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     return StringArrayValue;
 }(TagValue));
@@ -109,7 +115,7 @@ exports.StringArrayValue = StringArrayValue;
 var StringValue = (function (_super) {
     __extends(StringValue, _super);
     function StringValue() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     return StringValue;
 }(TagValue));
@@ -120,8 +126,8 @@ var TagDefinition = (function () {
     return TagDefinition;
 }());
 exports.TagDefinition = TagDefinition;
-var TagDefinition;
 (function (TagDefinition) {
+    var DataTypeEnum;
     (function (DataTypeEnum) {
         DataTypeEnum[DataTypeEnum["Boolean"] = 'boolean'] = "Boolean";
         DataTypeEnum[DataTypeEnum["Integer"] = 'integer'] = "Integer";
@@ -131,9 +137,9 @@ var TagDefinition;
         DataTypeEnum[DataTypeEnum["IntegerArray"] = 'integerArray'] = "IntegerArray";
         DataTypeEnum[DataTypeEnum["FloatArray"] = 'floatArray'] = "FloatArray";
         DataTypeEnum[DataTypeEnum["StringArray"] = 'stringArray'] = "StringArray";
-    })(TagDefinition.DataTypeEnum || (TagDefinition.DataTypeEnum = {}));
-    var DataTypeEnum = TagDefinition.DataTypeEnum;
+    })(DataTypeEnum = TagDefinition.DataTypeEnum || (TagDefinition.DataTypeEnum = {}));
 })(TagDefinition = exports.TagDefinition || (exports.TagDefinition = {}));
+exports.TagDefinition = TagDefinition;
 var TagReference = (function () {
     function TagReference() {
     }
@@ -184,10 +190,10 @@ var VoidAuth = (function () {
     return VoidAuth;
 }());
 exports.VoidAuth = VoidAuth;
+var DatastoreApiApiKeys;
 (function (DatastoreApiApiKeys) {
     DatastoreApiApiKeys[DatastoreApiApiKeys["api_key"] = 0] = "api_key";
-})(exports.DatastoreApiApiKeys || (exports.DatastoreApiApiKeys = {}));
-var DatastoreApiApiKeys = exports.DatastoreApiApiKeys;
+})(DatastoreApiApiKeys = exports.DatastoreApiApiKeys || (exports.DatastoreApiApiKeys = {}));
 var DatastoreApi = (function () {
     function DatastoreApi(basePathOrUsername, password, basePath) {
         this.basePath = defaultBasePath;

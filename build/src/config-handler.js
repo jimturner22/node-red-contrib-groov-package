@@ -1,7 +1,8 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var ApiExLib = require("./api-ex");
-var CertificateUtil = require('opto22-node-red-common/lib/CertificateUtil');
-var MessageQueue_1 = require('opto22-node-red-common/lib/MessageQueue');
+var CertificateUtil = require("opto22-node-red-common/lib/CertificateUtil");
+var MessageQueue_1 = require("opto22-node-red-common/lib/MessageQueue");
 var RED;
 function setRED(globalRED) {
     RED = globalRED;
