@@ -36,7 +36,8 @@ var ResponseErrorMessages = (function () {
     ResponseErrorMessages.errors = {
         'ECONNREFUSED': 'Connection refused',
         'ETIMEDOUT': 'Timeout',
-        'EHOSTUNREACH': 'groov unreachable',
+        'EHOSTUNREACH': 'Device unreachable',
+        'ENETUNREACH': 'Network unreachable',
         'ENOTFOUND': 'Address not found',
         'EINVAL': 'Invalid argument',
         'EAI_AGAIN': 'Address not found',

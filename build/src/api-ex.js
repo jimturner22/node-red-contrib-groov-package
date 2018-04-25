@@ -45,8 +45,8 @@ var DatastoreApiEx = (function (_super) {
         var path = '/api/';
         _this = _super.call(this, address + path) || this;
         _this.hasDeterminedSystemType = false;
-        _this.isGroovBox = false;
-        _this.isGroovEPIC = false;
+        _this.isTargetGroovBox = false;
+        _this.isTargetGroovEPIC = false;
         _this.tagMap = null;
         _this.originalAddress = address;
         _this.port = 443;
@@ -93,15 +93,18 @@ var DatastoreApiEx = (function (_super) {
         }
         return this.configError;
     };
-    DatastoreApiEx.prototype.getServerType = function (callback) {
+    DatastoreApiEx.prototype.getDeviceType = function (node, callback) {
         var _this = this;
         if (this.hasDeterminedSystemType) {
             process.nextTick(callback);
         }
         else {
+            if (node) {
+                node.status({ fill: "green", shape: "ring", text: 'determining device type' });
+            }
             _super.prototype.dataStoreListDevices.call(this).then(function (fullfilledResponse) {
                 if (fullfilledResponse.body && Array.isArray(fullfilledResponse.body)) {
-                    _this.isGroovBox = true;
+                    _this.isTargetGroovBox = true;
                     _this.hasDeterminedSystemType = true;
                     callback();
                 }
@@ -109,7 +112,7 @@ var DatastoreApiEx = (function (_super) {
                     _this.basePath = '/view/api/';
                     _super.prototype.dataStoreListDevices.call(_this).then(function (fullfilledResponse) {
                         if (fullfilledResponse.body && Array.isArray(fullfilledResponse.body)) {
-                            _this.isGroovEPIC = true;
+                            _this.isTargetGroovEPIC = true;
                             _this.hasDeterminedSystemType = true;
                             callback();
                         }
@@ -122,10 +125,14 @@ var DatastoreApiEx = (function (_super) {
                     });
                 }
             }).catch(function (error) {
+                if (error && (error.code == 'ETIMEDOUT' || error.code == 'ENETUNREACH')) {
+                    callback(error);
+                    return;
+                }
                 _this.basePath = _this.originalAddress + '/view/api/';
                 _super.prototype.dataStoreListDevices.call(_this).then(function (fullfilledResponse) {
                     if (fullfilledResponse.body && Array.isArray(fullfilledResponse.body)) {
-                        _this.isGroovEPIC = true;
+                        _this.isTargetGroovEPIC = true;
                         _this.hasDeterminedSystemType = true;
                         callback();
                     }

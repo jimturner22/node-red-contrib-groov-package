@@ -49,7 +49,11 @@ var NodeBaseImpl = (function () {
             this.node.status({ fill: "red", shape: "dot", text: 'Configuration error' });
             return;
         }
-        this.apiLib.getServerType(function () {
+        this.apiLib.getDeviceType(this.node, function (error) {
+            if (error) {
+                ErrorHanding.handleErrorResponse(error, msg, _this.node);
+                return;
+            }
             var queueLength = _this.msgQueue.add(msg, _this.node, _this, _this.onInput);
             if (queueLength < 0) {
                 _this.node.warn('Message rejected. Queue is full for Groov.');
